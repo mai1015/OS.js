@@ -50,7 +50,7 @@
 
         "osjs": {
           "enabled": true,
-          "transport": "OSjs",
+          "transport": "Dist",
           "icon": "devices/harddrive.png",
           "description": "OS.js"
         },

@@ -1022,7 +1022,7 @@
           realDest = tmpPath;
         }
 
-        VFS.Transports.Internal.upload(f, realDest, function(err, result, ev) {
+        VFS.Transports.OSjs.upload(f, realDest, function(err, result, ev) {
           if ( err ) {
             if ( err === 'canceled' ) {
               callback(API._('ERR_VFS_UPLOAD_CANCELLED'), null, ev);
