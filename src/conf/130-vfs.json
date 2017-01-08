@@ -52,7 +52,8 @@
           "enabled": true,
           "transport": "Dist",
           "icon": "devices/harddrive.png",
-          "description": "OS.js"
+          "description": "OS.js",
+          "readOnly": true
         },
 
         "home": {
