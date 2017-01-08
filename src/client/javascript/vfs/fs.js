@@ -45,6 +45,17 @@
   /////////////////////////////////////////////////////////////////////////////
 
   /*
+   * The default callback function when none was defined
+   */
+  function noop(err, res) {
+    if ( err ) {
+      console.error('VFS operation without callback caused an error', err)
+    } else {
+      console.warn('VFS operation without callback', res);
+    }
+  }
+
+  /*
    * Perform VFS request
    */
   function request(test, method, args, callback, options, appRef) {
@@ -370,6 +381,9 @@
    * @api     OSjs.VFS.find()
    */
   VFS.find = function VFS_find(item, args, callback, options) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::find()', item, args, options);
     if ( arguments.length < 3 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -403,6 +417,9 @@
    * @param   {Boolean}         [options.backlink=true]          Return '..' when applicable
    */
   VFS.scandir = function VFS_scandir(item, callback, options) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::scandir()', item, options);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -460,6 +477,9 @@
    * @param   {OSjs.Core.Application}     [appRef]      Reference to an Application
    */
   VFS.write = function VFS_write(item, data, callback, options, appRef) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::write()', item, options);
     if ( arguments.length < 3 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -539,6 +559,9 @@
    * @param   {String}          [options.type]      What to return, default: binary. Can also be: text, datasource, json
    */
   VFS.read = function VFS_read(item, callback, options) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::read()', item, options);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -551,8 +574,6 @@
       callback(e);
       return;
     }
-
-    options = options || {};
 
     function _finished(error, response) {
       if ( error ) {
@@ -628,6 +649,9 @@
    * @param   {OSjs.Core.Application}     [appRef]              Seference to an Application
    */
   VFS.copy = function VFS_copy(src, dest, callback, options, appRef) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::copy()', src, dest, options);
     if ( arguments.length < 3 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -731,7 +755,8 @@
    * @param   {OSjs.Core.Application}     [appRef]              Seference to an Application
    */
   VFS.move = function VFS_move(src, dest, callback, options, appRef) {
-    var self = this;
+    options = options || {};
+    callback = callback || noop;
 
     console.debug('VFS::move()', src, dest, options);
     if ( arguments.length < 3 ) {
@@ -767,7 +792,7 @@
 
         dest.mime = src.mime;
 
-        self.copy(src, dest, function(error, result) {
+        OSjs.VFS.copy(src, dest, function(error, result) {
           if ( error ) {
             error = API._('ERR_VFS_TRANSFER_FMT', error);
             return _finished(error);
@@ -830,6 +855,9 @@
    * @param   {OSjs.Core.Application}     [appRef]              Reference to an Application
    */
   VFS.unlink = function VFS_unlink(item, callback, options, appRef) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::unlink()', item, options);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -894,6 +922,9 @@
    * @param   {OSjs.Core.Application}     [appRef]              Reference to an Application
    */
   VFS.mkdir = function VFS_mkdir(item, callback, options, appRef) {
+    options = options || {};
+    callback = callback || noop;
+
     console.debug('VFS::mkdir()', item, options);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -930,6 +961,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.exists = function VFS_exists(item, callback) {
+    callback = callback || noop;
+
     console.debug('VFS::exists()', item);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -957,6 +990,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.fileinfo = function VFS_fileinfo(item, callback) {
+    callback = callback || noop;
+
     console.debug('VFS::fileinfo()', item);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -984,6 +1019,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.url = function VFS_url(item, callback) {
+    callback = callback || noop;
+
     console.debug('VFS::url()', item);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -1021,8 +1058,11 @@
    * @param   {OSjs.Core.Application}     [appRef]            Reference to an Application
    */
   VFS.upload = function VFS_upload(args, callback, options, appRef) {
-    console.debug('VFS::upload()', args);
+    callback = callback || noop;
+    options = options || {};
     args = args || {};
+
+    console.debug('VFS::upload()', args);
 
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -1135,9 +1175,10 @@
     var _didx = 1;
 
     return function(args, callback) {
-      console.debug('VFS::download()', args);
+      callback = callback || noop;
       args = args || {};
 
+      console.debug('VFS::download()', args);
       if ( arguments.length < 2 ) {
         callback(API._('ERR_VFS_NUM_ARGS'));
         return;
@@ -1219,6 +1260,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.trash = function VFS_trash(item, callback) {
+    callback = callback || noop;
+
     console.debug('VFS::trash()', item);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -1247,6 +1290,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.untrash = function VFS_untrash(item, callback) {
+    callback = callback || noop;
+
     console.debug('VFS::untrash()', item);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -1274,6 +1319,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.emptyTrash = function VFS_emptyTrash(callback) {
+    callback = callback || noop;
+
     console.debug('VFS::emptyTrash()');
     if ( arguments.length < 1 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -1297,6 +1344,8 @@
    * @param   {CallbackVFS}     callback  Callback function
    */
   VFS.freeSpace = function VFS_freeSpace(item, callback) {
+    callback = callback || noop;
+
     console.debug('VFS::freeSpace()', item);
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
@@ -1329,6 +1378,8 @@
    * @return  {Number}                    The index of your watch (you can unwatch with this)
    */
   VFS.watch = function VFS_watch(item, callback) {
+    callback = callback || noop;
+
     if ( arguments.length < 2 ) {
       callback(API._('ERR_VFS_NUM_ARGS'));
       return;
