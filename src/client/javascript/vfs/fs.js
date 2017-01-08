@@ -141,7 +141,7 @@
    * Will transform the argument to a VFS.File instance
    * or throw an error depending on input
    */
-  function checkMetadataArgument(item, err) {
+  function checkMetadataArgument(item, err, checkRo) {
     if ( typeof item === 'string' ) {
       item = new VFS.File(item);
     } else if ( typeof item === 'object' && item.path ) {
@@ -157,8 +157,13 @@
       item.path = alias;
     }
 
-    if ( !Core.getMountManager().getModuleFromPath(item.path, false) ) {
+    var mm = Core.getMountManager();
+    if ( !mm.getModuleFromPath(item.path, false) ) {
       throw new Error(API._('ERR_VFSMODULE_NOT_FOUND_FMT', item.path));
+    }
+
+    if ( checkRo && isReadOnly(item) ) {
+      throw new Error(API._('ERR_VFSMODULE_READONLY_FMT', mm.getModuleFromPath(item.path)));
     }
 
     return item;
@@ -809,7 +814,7 @@
       throw new Error(API._('ERR_VFS_NUM_ARGS'));
     }
 
-    item = checkMetadataArgument(item);
+    item = checkMetadataArgument(item, null, true);
 
     function _checkPath() {
       var pkgdir = OSjs.Core.getSettingsManager().instance('PackageManager').get('PackagePaths', []);
@@ -868,7 +873,8 @@
       throw new Error(API._('ERR_VFS_NUM_ARGS'));
     }
 
-    item = checkMetadataArgument(item);
+    item = checkMetadataArgument(item, null, true);
+
     existsWrapper(item, function(error) {
       if ( error ) {
         return callback(API._('ERR_VFSMODULE_MKDIR_FMT', error));
@@ -1006,6 +1012,11 @@
       args.files.forEach(function(f, i) {
         request(args.destination, 'upload', [f, args.destination], callback, options);
       });
+      return;
+    }
+
+    if ( isReadOnly(VFS.file(args.destination)) ) {
+      callback(API._('ERR_VFSMODULE_READONLY_FMT', mm.getModuleFromPath(args.destination)));
       return;
     }
 
