@@ -244,18 +244,14 @@ $ node osjs build:config
 <h2 id="dropbox">Dropbox</h2>
 <p>First you have to create <a href="https://www.dropbox.com/login?cont=https%3A%2F%2Fwww.dropbox.com%2Fdevelopers%2Fapps">API Credentials</a> to allow OS.js access.</p>
 <p>Set your redirect URL to <code>http://your-host/vendor/dropboxOauthReceiver.html</code>.</p>
-<pre class="language-bash"><code class="language-bash">$ <span class="token function">git</span> clone https://github.com/dropbox/dropbox-js.git vendor/dropbox-js
-
-<span class="token comment" spellcheck="true"># You may have to build dropbox.js manually before continuing</span>
-<span class="token comment" spellcheck="true"># Windows users: You&apos;d have to use resolve the symlinks in &quot;dist/vendor&quot;</span>
-
-$ node osjs config:set --name<span class="token operator">=</span>client.DropboxAPI.ClientKey --value<span class="token operator">=</span>YOUR_CLIENT_KEY
+<pre class="language-bash"><code class="language-bash">$ node osjs config:set --name<span class="token operator">=</span>client.DropboxAPI.ClientKey --value<span class="token operator">=</span>YOUR_CLIENT_KEY
 $ node osjs config:set --name<span class="token operator">=</span>client.VFS.Dropbox.Enabled --value<span class="token operator">=</span>true
 $ node osjs config:add-preload --name<span class="token operator">=</span>dropbox --path<span class="token operator">=</span>/vendor/dropbox.js
 $ node osjs build:config
 </code></pre>
 <p>You also need to install dropbox:</p>
-<pre class="language-bash"><code class="language-bash">$ <span class="token function">mkdir</span> vendor
+<pre class="language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># Windows users: You&apos;d have to use resolve the symlinks in &quot;dist/vendor&quot;</span>
+$ <span class="token function">mkdir</span> vendor
 $ <span class="token function">cd</span> vendor/
 $ <span class="token function">git</span> clone https://github.com/dropbox/dropbox-js.git
 $ <span class="token function">cd</span> dropbox-js
