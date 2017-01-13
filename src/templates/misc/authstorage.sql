@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
+  `token` varchar(255),
   `groups` text,
   `settings` text,
   PRIMARY KEY (`id`)

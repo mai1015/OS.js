@@ -53,6 +53,7 @@
         },
         "database": {
           "driver": "mysql",
+          "remember": false,
           "sqlite": {
             "database": "%ROOT%/src/server/authstorage.sqlite"
           },

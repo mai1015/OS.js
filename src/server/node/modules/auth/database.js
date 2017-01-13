@@ -87,40 +87,68 @@ const manager = {
 };
 
 module.exports.login = function(http, data) {
-  const q = 'SELECT `id`, `username`, `name`, `password` FROM `users` WHERE `username` = ? LIMIT 1;';
-  const a = [data.username];
 
   return new Promise(function(resolve, reject) {
+    const rememberEnabled = false;
+
     function _invalid() {
       reject('Invalid credentials');
     }
 
-    function _auth(row) {
+    function _save(db, row) {
+      return new Promise(function(resolve, reject) {
+        const token = data.remember ? null : 'foo'; // TODO
+
+        if ( rememberEnabled ) {
+          const q = 'UPDATE `users` SET `token` = ? WHERE `username` = ?;';
+          const a = [token, row.username];
+          db.query(q, a).then(resolve).catch(reject);
+        } else {
+          resolve(null);
+        }
+      });
+    }
+
+    function _auth(row, db) {
       const hash = row.password.replace(/^\$2y(.+)$/i, '\$2a$1');
       _bcrypt.compare(data.password, hash, function(err, res) {
         if ( err ) {
           reject(err);
         } else if ( res === true ) {
-          resolve({
-            id: parseInt(row.id),
-            username: row.username,
-            name: row.name
-          });
+          _save(db, row).then(function(token) {
+            resolve({
+              token: token,
+              id: parseInt(row.id),
+              username: row.username,
+              name: row.name
+            });
+          }).catch(reject);
         } else {
           _invalid();
         }
       });
     }
 
-    _db.instance('authstorage').then(function(db) {
+    function _login(db) {
+      var q, a;
+      if ( rememberEnabled && data.token && data.username ) {
+        q = 'SELECT `id`, `username`, `name`, `password` FROM `users` WHERE `username` = ? AND `token` = ? LIMIT 1;';
+        a = [data.username, data.token];
+      } else {
+        q = 'SELECT `id`, `username`, `name`, `password` FROM `users` WHERE `username` = ? LIMIT 1;';
+        a = [data.username];
+      }
+
       db.query(q, a).then(function(row) {
         if ( row ) {
-          _auth(row);
+          _auth(row, db);
         } else {
           _invalid();
         }
       }).catch(reject);
-    });
+    }
+
+    _db.instance('authstorage').then(_login);
   });
 };
 
