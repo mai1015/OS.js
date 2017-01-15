@@ -179,6 +179,7 @@ Disallow: /doc/client/srcclientjavascriptvfsmountslocalstoragejs.html
 Disallow: /doc/client/srcclientjavascriptvfsmountsdropboxjs.html
 Disallow: /doc/client/srcclientjavascripthelpersiframe-applicationjs.html
 Disallow: /doc/client/srcjavascriptvfsjs.html
+Disallow: /doc/client/OSjs.VFS.Transports.Internal.html
 Disallow: /doc/client/OSjs.Authenticator.html
 Disallow: /doc/client/OSjs.Core.Handler.html
 Disallow: /doc/client/OSjs.Core.HandlerConnection.html
