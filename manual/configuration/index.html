@@ -227,6 +227,21 @@
 <p><em>Configuration</em> is done with JSON files that are loaded in order and merged together to form a final tree from which all settings are read.</p>
 <p>The files are divided into sections and prefixed with a number so that they load in correct order.</p>
 <p>If you want to see the entire configuration tree, run <code>node osjs config:get</code>.</p>
+<h2 id="variables">Variables</h2>
+<p>You can define your own variables (or keywords) in the configuration tree:</p>
+<pre class="language-bash"><code class="language-bash">$ node osjs config:set --name<span class="token operator">=</span>my.namespace.key --value<span class="token operator">=</span>foo
+$ node osjs config:set --name<span class="token operator">=</span>some.other.key --value<span class="token operator">=</span><span class="token string">&quot;%my.namespace.key% and some other stuff&quot;</span>
+</code></pre>
+<p>You can also define root-level variables in all uppercase letters that can be overriden by environmental variables when you run OS.js:</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># Set a default value</span>
+$ node osjs config:set --name<span class="token operator">=</span>KEY --value<span class="token operator">=</span>/opt
+
+<span class="token comment" spellcheck="true"># Then for example change a mountpoint to use this variable</span>
+$ node osjs config:set --name<span class="token operator">=</span>server.vfs.mounts.shared --value<span class="token operator">=</span><span class="token string">&quot;%KEY%/shared&quot;</span>
+
+<span class="token comment" spellcheck="true"># Example of how to override upon start</span>
+$ KEY<span class="token operator">=</span>/usr/share/osjs node osjs run
+</code></pre>
 <h2 id="environment">Environment</h2>
 <p>See the <a href="/manual/build/cli">Build Commands</a> page for more information about environments.</p>
 <pre class="language-bash"><code class="language-bash"><span class="token comment" spellcheck="true"># Set your timezone manually</span>
@@ -285,6 +300,11 @@ $ node osjs build:core
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
+</code></pre>
+<p>You can add files the configuration system:</p>
+<pre class="language-bash"><code class="language-bash">$ node osjs config:add-script --path<span class="token operator">=</span>/path/to/script.js <span class="token punctuation">[</span>--overlay<span class="token operator">=</span>custom_name<span class="token punctuation">]</span>
+$ node osjs config:add-style --path<span class="token operator">=</span>/path/to/style.css <span class="token punctuation">[</span>--overlay<span class="token operator">=</span>custom_name<span class="token punctuation">]</span>
+$ node osjs config:add-locale --path<span class="token operator">=</span>/path/to/locale.js <span class="token punctuation">[</span>--overlay<span class="token operator">=</span>custom_name<span class="token punctuation">]</span>
 </code></pre>
 <h3 id="programatic-approach">Programatic approach</h3>
 <pre class="language-js"><code class="language-js"><span class="token keyword">var</span> list <span class="token operator">=</span> <span class="token punctuation">[</span>
